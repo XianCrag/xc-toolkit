@@ -1,0 +1,13 @@
+{
+  "name": "rolling-bond-simulation",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Simulation comparing rolling long-term bonds vs fixed bond strategies",
+  "scripts": {
+    "start": "http-server --no-cache -p 8080",
+    "test": "node test.js"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
