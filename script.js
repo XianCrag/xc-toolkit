@@ -1,6 +1,6 @@
 import { simulateRolling, simulateFixed } from './simulation.js';
 
-const DEFAULTS = { maturity: 30, currentFFR: 4.5, midFFR: 3.0, endFFR: 2.5, current30y: 4.7, fixedUseFFR: true, fixedCompoundRate: 4.7, volatility: 0.15, rollPeriod: 10, initialInvestment: 10000 };
+const DEFAULTS = { maturity: 30, currentFFR: 3.75, midFFR: 4, endFFR: 0.16, current30y: 4.7, fixedUseFFR: false, fixedCompoundRate: 4.7, volatility: 0.15, rollPeriod: 10, initialInvestment: 10000 };
 const NUM_INPUTS = ['maturity', 'currentFFR', 'midFFR', 'endFFR', 'current30y', 'fixedCompoundRate', 'volatility', 'rollPeriod', 'initialInvestment'];
 const STORAGE_KEY = 'bondSimInputs';
 
