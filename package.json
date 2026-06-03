@@ -1,11 +1,12 @@
 {
-  "name": "rolling-bond-simulation",
+  "name": "xc-toolkit",
   "version": "1.0.0",
   "type": "module",
-  "description": "Simulation comparing rolling long-term bonds vs fixed bond strategies",
+  "description": "XianCrag Toolkit — rolling bond sim and scaling-in planner",
   "scripts": {
     "start": "http-server --no-cache -p 8080",
-    "test": "node test.js"
+    "test": "node rolling-bond/test.js",
+    "test:scaling": "node --test scaling-in/engine.test.js"
   },
   "devDependencies": {
     "http-server": "^14.1.1"

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Scaling In · 几步建仓 → 连续加仓</title>
+    <meta
+      name="description"
+      content="阶梯参考策略、拟合均价与连续路径补仓建议。"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-crosshair@2.0.0/dist/chartjs-plugin-crosshair.min.js"></script>
+    <link rel="stylesheet" href="../xiancrag-ui.css" />
+    <link rel="stylesheet" href="styles.css?v=23" />
+  </head>
+  <body>
+    <header class="xc-header">
+      <div class="xc-header-row">
+        <h1>Scaling In</h1>
+        <a class="xc-header-home" href="../">首页</a>
+      </div>
+      <p>阶梯参考 → 拟合均价 → 连续模拟与补仓</p>
+    </header>
+
+    <main class="xc-page xc-page-wide si-layout">
+      <div id="error" class="xc-error si-error" hidden></div>
+
+      <aside class="si-sidebar">
+        <section class="xc-card">
+          <h2>参考策略</h2>
+          <div class="xc-grid-2">
+            <div>
+              <label for="initial-price">初始价格</label>
+              <input id="initial-price" type="number" min="0.01" step="0.01" value="100" />
+            </div>
+            <div>
+              <label for="total-budget">总预算</label>
+              <input id="total-budget" type="number" min="1" step="100" value="100000" />
+            </div>
+          </div>
+
+          <h3>建仓步骤（权重合计 100%）</h3>
+          <div class="table-wrap si-steps-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>预算 %</th>
+                  <th>触发跌幅 %</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="steps-body"></tbody>
+            </table>
+          </div>
+          <div class="xc-btn-row">
+            <button type="button" id="add-step" class="xc-btn-secondary">+ 添加一步</button>
+          </div>
+        </section>
+
+        <section class="xc-card si-position">
+          <h2>持仓</h2>
+          <div class="xc-grid-2">
+            <div>
+              <label for="current-price-input">现价</label>
+              <input id="current-price-input" type="number" min="0.01" step="0.0001" value="95" />
+            </div>
+            <div>
+              <label for="shares-held">持有股数</label>
+              <input id="shares-held" type="number" min="0" step="0.0001" value="0" />
+            </div>
+            <div class="si-field-full">
+              <label for="avg-cost-held">持仓均价</label>
+              <input id="avg-cost-held" type="number" min="0" step="0.0001" value="" placeholder="—" disabled />
+            </div>
+          </div>
+
+          <div class="buy-result">
+            <dl>
+              <dt>均价</dt>
+              <dd id="buy-current-avg">—</dd>
+              <dt>拟合均价</dt>
+              <dd id="buy-plan-avg">—</dd>
+            </dl>
+            <div class="buy-action-line buy-action-primary">
+              <span class="buy-action-label">对齐拟合</span>
+              <div id="buy-action"></div>
+            </div>
+            <div class="buy-action-line buy-action-secondary">
+              <span class="buy-action-label">累计股数</span>
+              <div id="buy-action-shares"></div>
+            </div>
+          </div>
+
+          <div class="xc-btn-row">
+            <button type="button" id="reset-position" class="xc-btn-secondary">清空持仓</button>
+          </div>
+        </section>
+      </aside>
+
+      <section class="xc-card si-hero">
+        <h2>均价对比</h2>
+        <p class="xc-muted si-fit-equation" id="fit-line-note" aria-live="polite"></p>
+        <div class="si-chart-wrap">
+          <div id="chart-legend" class="si-chart-legend" aria-hidden="true"></div>
+          <canvas
+            id="avg-chart"
+            role="img"
+            aria-label="均价对比：参考阶梯、拟合虚线、连续买点"
+          ></canvas>
+        </div>
+      </section>
+
+      <section class="si-reference">
+        <h2 class="si-reference-title">参考明细</h2>
+
+        <details class="xc-card" open>
+          <summary>参考策略 · 触发点执行</summary>
+          <div class="table-wrap">
+            <table class="si-ref-table">
+              <thead>
+                <tr>
+                  <th>跌幅</th>
+                  <th>价格</th>
+                  <th>本档花费</th>
+                  <th>本档股数</th>
+                  <th>累计花费</th>
+                  <th>累计股数</th>
+                  <th>均价</th>
+                  <th>盈亏</th>
+                </tr>
+              </thead>
+              <tbody id="discrete-body"></tbody>
+            </table>
+          </div>
+          <p class="xc-muted summary" id="discrete-summary"></p>
+        </details>
+
+        <details class="xc-card">
+          <summary>连续路径 · 每 1% 跌幅模拟</summary>
+          <div class="table-wrap">
+            <table class="si-ref-table">
+              <thead>
+                <tr>
+                  <th>跌幅</th>
+                  <th>价格</th>
+                  <th>本档花费</th>
+                  <th>本档股数</th>
+                  <th>累计花费</th>
+                  <th>累计股数</th>
+                  <th>均价</th>
+                  <th>盈亏</th>
+                </tr>
+              </thead>
+              <tbody id="continuous-body"></tbody>
+            </table>
+          </div>
+          <p class="xc-muted summary" id="continuous-summary"></p>
+        </details>
+      </section>
+    </main>
+
+    <footer>scaling-in · static app for GitHub Pages</footer>
+    <script type="module" src="app.js?v=25"></script>
+  </body>
+</html>

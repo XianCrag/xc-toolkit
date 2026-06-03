@@ -1,149 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rolling vs Fixed Bond Simulation</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-crosshair@2.0.0/dist/chartjs-plugin-crosshair.min.js"></script>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>XianCrag Toolkit</title>
+  <link rel="stylesheet" href="xiancrag-ui.css" />
 </head>
 <body>
-    <div class="container">
-        <h1>📊 Rolling vs Fixed Bond Simulation</h1>
-        <p class="subtitle">Compare rolling long-term bonds strategy vs fixed bond strategy with interest rate fluctuations</p>
-        
-        <div class="controls">
-            <div class="control-group">
-                <label for="maturity">Bond Maturity (years)</label>
-                <input type="number" id="maturity" value="30" min="1" max="50" step="1">
-            </div>
-            
-            <div class="control-group">
-                <label for="currentFFR">Start FFR (%)</label>
-                <input type="number" id="currentFFR" value="3.75" min="0" max="20" step="0.1">
-            </div>
-            
-            <div class="control-group">
-                <label for="midFFR">Mid FFR (%)</label>
-                <input type="number" id="midFFR" value="4" min="0" max="20" step="0.1">
-            </div>
-            
-            <div class="control-group">
-                <label for="endFFR">End FFR (%)</label>
-                <input type="number" id="endFFR" value="0.16" min="0" max="20" step="0.1">
-            </div>
-            
-            <div class="control-group">
-                <label for="current30y">Current 30y Rate (%)</label>
-                <input type="number" id="current30y" value="4.7" min="0" max="20" step="0.1">
-            </div>
-            
-            <div class="control-group">
-                <label>
-                    <input type="checkbox" id="fixedUseFFR">
-                    Fixed coupons compound at FFR
-                </label>
-            </div>
-            
-            <div class="control-group">
-                <label for="fixedCompoundRate">Fixed Compound Rate (%)</label>
-                <input type="number" id="fixedCompoundRate" value="4.7" min="0" max="20" step="0.1">
-            </div>
-            
-            <div class="control-group">
-                <label for="volatility">Volatility (σ)</label>
-                <input type="number" id="volatility" value="0.15" min="0" max="1" step="0.01">
-            </div>
-            
-            <div class="control-group">
-                <label for="rollPeriod">Roll Period (years)</label>
-                <input type="number" id="rollPeriod" value="10" min="1" max="30" step="1">
-            </div>
-            
-            <div class="control-group">
-                <label for="initialInvestment">Initial Investment ($)</label>
-                <input type="number" id="initialInvestment" value="10000" min="1000" step="1000">
-            </div>
-        </div>
-        
-        <div class="button-group">
-            <button id="runBtn">Run Simulation</button>
-            <button id="monteCarloBtn">Run 100 Simulations (Monte Carlo)</button>
-            <button id="resetBtn">Reset Defaults</button>
-        </div>
-        
-        <div class="results" id="results" style="display: none;">
-            <div class="result-card">
-                <h3>Rolling Strategy</h3>
-                <div class="result-value" id="rollingValue">$0</div>
-                <div class="result-label">Final Value</div>
-                <div class="result-label" id="rollingReturn">Return: 0%</div>
-            </div>
-            
-            <div class="result-card">
-                <h3>Fixed Strategy</h3>
-                <div class="result-value" id="fixedValue">$0</div>
-                <div class="result-label">Final Value</div>
-                <div class="result-label" id="fixedReturn">Return: 0%</div>
-            </div>
-            
-            <div class="result-card">
-                <h3>Difference</h3>
-                <div class="result-value" id="difference">$0</div>
-                <div class="result-label" id="differenceLabel">Rolling - Fixed</div>
-            </div>
-        </div>
-        
-        <div class="chart-container">
-            <canvas id="chart"></canvas>
-        </div>
-        
-        <div class="table-container">
-            <h3>Rolling Strategy - Year-by-Year Transactions</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Year</th>
-                        <th>FFR</th>
-                        <th>30y Rate</th>
-                        <th>Sold</th>
-                        <th>Sale Value</th>
-                        <th>Bought</th>
-                        <th>NAV</th>
-                    </tr>
-                </thead>
-                <tbody id="txTable"></tbody>
-            </table>
-        </div>
-        
-        <div class="table-container">
-            <h3>Fixed Strategy - Coupons Reinvested at FFR</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Year</th>
-                        <th>FFR</th>
-                        <th>Coupon Received</th>
-                        <th>Compounded to Maturity</th>
-                    </tr>
-                </thead>
-                <tbody id="fixedTable"></tbody>
-            </table>
-        </div>
-        
-        <div class="info-box">
-            <h3>How it works:</h3>
-            <p>
-                <strong>Rolling Strategy (TLT-style):</strong> Holds bonds with 20-30 years remaining. Initially distributed evenly: bonds with 21y, 22y, ..., 30y remaining. Each year, bonds that drop below 20y are sold and new 30y bonds are bought at current market rate. Coupons reinvested at market price.
-                <br><br>
-                <strong>Fixed Strategy:</strong> Buy bonds at initial rate and hold to maturity with annual compounding.
-                <br><br>
-                <strong>Interest Rate Model:</strong> FFR follows mean-reverting random walk toward end FFR. 30y rate derived from FFR changes with beta=0.3 (long rates less sensitive to short-term changes).
-            </p>
-        </div>
-    </div>
-
-    <script type="module" src="script.js"></script>
+  <header class="xc-header">
+    <h1>XianCrag Toolkit</h1>
+  </header>
+  <main class="xc-page-home">
+    <nav>
+      <a href="rolling-bond/">Rolling vs fixed bond<span>Rate path simulation</span></a>
+      <a href="scaling-in/">Scaling-in planner<span>几步建仓 · per-1% schedule</span></a>
+    </nav>
+  </main>
 </body>
 </html>

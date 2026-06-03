@@ -1,0 +1,313 @@
+/* scaling-in — layout, chart, reference */
+
+.si-layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 300px) 1fr;
+  gap: 1.25rem;
+  align-items: start;
+  grid-template-areas:
+    "error error"
+    "sidebar hero"
+    "sidebar reference";
+}
+
+.si-error { grid-area: error; }
+.si-sidebar {
+  grid-area: sidebar;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.si-hero { grid-area: hero; }
+.si-reference { grid-area: reference; }
+
+.si-sidebar .xc-card h2 { font-size: 1rem; }
+.si-position .xc-grid-2 { margin-bottom: 0.25rem; }
+.si-field-full { grid-column: 1 / -1; }
+
+.si-hero h2 { margin-bottom: 0.65rem; }
+
+.si-fit-equation {
+  margin: 0 0 0.65rem;
+  font-size: 0.8rem;
+}
+
+.si-tip-sample { font-weight: 600; }
+
+.si-tip-sample.tip-good { color: var(--ok); }
+
+.si-tip-sample.tip-bad { color: #ff6b6b; }
+
+.si-steps-table { margin-top: 0.35rem; }
+
+.si-chart-wrap {
+  position: relative;
+  height: clamp(360px, 48vh, 520px);
+  background: #f4f6fa;
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+}
+
+.si-chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem 1.25rem;
+  margin-bottom: 0.5rem;
+  font-size: 12px;
+  color: #334155;
+}
+
+.si-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  line-height: 1;
+}
+
+.si-legend-icon {
+  flex-shrink: 0;
+  display: inline-block;
+}
+
+.si-legend-icon-ref {
+  width: 10px;
+  height: 10px;
+  background: #3498db;
+  border-radius: 1px;
+}
+
+.si-legend-icon-fit {
+  width: 18px;
+  height: 0;
+  border-top: 1.5px dashed #3498db;
+}
+
+.si-legend-split-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, #3dd68c 50%, #ff6b6b 50%);
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.si-chart-tooltip {
+  position: absolute;
+  z-index: 20;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, calc(-100% - 8px));
+  background: #1a2332;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  padding: 0.55rem 0.65rem;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  color: #e2e8f0;
+  min-width: 14rem;
+}
+
+.si-tip-title {
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+  font-size: 0.82rem;
+  color: #f8fafc;
+}
+
+.si-tip-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.si-tip-table th,
+.si-tip-table td {
+  padding: 0.12rem 0.35rem;
+  text-align: right;
+  white-space: nowrap;
+  color: #e2e8f0;
+}
+
+.si-tip-table th:first-child,
+.si-tip-table td:first-child {
+  text-align: left;
+  color: #94a3b8;
+  padding-left: 0;
+}
+
+.si-tip-table thead th {
+  font-weight: 600;
+  font-size: 0.72rem;
+  color: #cbd5e1;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+  padding-bottom: 0.25rem;
+}
+
+.si-tip-table tbody tr + tr td {
+  border-top: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.si-tip-table td.tip-good { color: #3dd68c; font-weight: 600; }
+.si-tip-table td.tip-bad { color: #ff6b6b; font-weight: 600; }
+
+.si-chart-wrap canvas {
+  display: block;
+  max-width: 100%;
+}
+
+.si-reference-title {
+  margin: 0 0 0.65rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.si-reference {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.si-reference details.xc-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.si-reference details > summary {
+  cursor: pointer;
+  padding: 0.85rem 1.15rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  list-style: none;
+  user-select: none;
+}
+
+.si-reference details > summary::-webkit-details-marker { display: none; }
+
+.si-reference details > summary::before {
+  content: "▸ ";
+  color: var(--muted);
+  display: inline-block;
+  width: 1em;
+}
+
+.si-reference details[open] > summary::before { content: "▾ "; }
+
+.si-reference details > .table-wrap,
+.si-reference details > .summary {
+  padding-left: 1.15rem;
+  padding-right: 1.15rem;
+}
+
+.si-reference details > .summary {
+  padding-bottom: 0.85rem;
+}
+
+.table-wrap { overflow-x: auto; margin-top: 0.5rem; }
+th, td { text-align: right; }
+th:first-child, td:first-child { text-align: left; }
+
+.si-ref-table { font-size: 0.82rem; }
+.si-ref-table th { white-space: nowrap; }
+
+.si-pl-cell {
+  white-space: nowrap;
+  line-height: 1.3;
+}
+
+.si-pl {
+  display: block;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.si-pl-pos { color: var(--ok); }
+.si-pl-neg { color: #c0392b; }
+
+.si-cell-sub {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.summary .si-pl { display: inline; }
+.summary .si-cell-sub { display: inline; margin-left: 0.35rem; }
+
+.summary strong { color: var(--ok); }
+
+.buy-result {
+  background: var(--surface2);
+  border-radius: 8px;
+  padding: 0.75rem 0.85rem;
+  margin-top: 0.35rem;
+  font-size: 0.85rem;
+}
+
+.buy-result dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.25rem 0.75rem;
+  margin: 0;
+}
+
+.buy-result dt { color: var(--muted); }
+.buy-result dd { margin: 0; text-align: right; }
+
+.si-buy-drop {
+  color: var(--muted);
+  font-size: 0.82em;
+}
+
+.si-buy-msg { margin: 0; line-height: 1.45; }
+
+.buy-action-line {
+  margin-top: 0.6rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+
+.buy-action-label {
+  display: block;
+  color: var(--muted);
+  font-size: 0.78rem;
+  margin-bottom: 0.25rem;
+}
+
+.buy-action-line strong { color: var(--ok); }
+
+.buy-action-primary .buy-action-label {
+  color: var(--text, inherit);
+  font-weight: 600;
+}
+
+.buy-action-secondary .buy-action-label,
+.buy-action-secondary { font-size: 0.82rem; }
+
+.si-position .xc-btn-row {
+  margin-top: 0.65rem;
+}
+
+footer {
+  text-align: center;
+  padding: 1.5rem;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+@media (max-width: 900px) {
+  .si-layout {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "error"
+      "hero"
+      "sidebar"
+      "reference";
+  }
+}
