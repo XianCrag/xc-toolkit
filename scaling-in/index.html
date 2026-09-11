@@ -11,18 +11,31 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-crosshair@2.0.0/dist/chartjs-plugin-crosshair.min.js"></script>
     <link rel="stylesheet" href="../xiancrag-ui.css" />
-    <link rel="stylesheet" href="styles.css?v=23" />
+    <link rel="stylesheet" href="styles.css?v=25" />
   </head>
   <body>
     <header class="xc-header">
-      <div class="xc-header-row">
-        <h1>Scaling In</h1>
-        <a class="xc-header-home" href="../">首页</a>
+      <div class="xc-wrap">
+        <div class="xc-header-row">
+          <h1>Scaling In</h1>
+          <a class="xc-header-home" href="../">首页</a>
+        </div>
+        <p>阶梯参考 → 拟合均价 → 连续模拟与补仓</p>
       </div>
-      <p>阶梯参考 → 拟合均价 → 连续模拟与补仓</p>
     </header>
 
     <main class="xc-page xc-page-wide si-layout">
+      <aside class="xc-info si-intro" role="note">
+        <span class="xc-info-mark" aria-hidden="true">i</span>
+        <div class="xc-info-body">
+          <span class="xc-info-title">Info</span>
+          <p>
+            把 Scaling-in 的几步建仓拟合成连续跌幅上的均价曲线，再对照现价与持仓给出补仓建议。
+            先改策略与持仓，再看图与下方明细。
+          </p>
+        </div>
+      </aside>
+
       <div id="error" class="xc-error si-error" hidden></div>
 
       <aside class="si-sidebar">
@@ -159,7 +172,7 @@
       </section>
     </main>
 
-    <footer>scaling-in · static app for GitHub Pages</footer>
+    <footer class="xc-footer">scaling-in · static app for GitHub Pages</footer>
     <script type="module" src="app.js?v=25"></script>
   </body>
 </html>

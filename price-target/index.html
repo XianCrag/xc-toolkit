@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>挂单触及概率 · Price target touch</title>
+    <meta
+      name="description"
+      content="按年化标准差倍数估算挂单价格在 1m / 3m / 6m / 1y 内被触及的概率。"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="../xiancrag-ui.css" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="xc-header">
+      <div class="xc-wrap">
+        <div class="xc-header-row">
+          <h1>挂单触及概率</h1>
+          <a class="xc-header-home" href="../">首页</a>
+        </div>
+        <p>偏离现价的年化 σ 倍数 → 1m / 3m / 6m / 1y 触及概率</p>
+      </div>
+    </header>
+
+    <main class="xc-page pt-page">
+      <aside class="xc-info" role="note">
+        <span class="xc-info-mark" aria-hidden="true">i</span>
+        <div class="xc-info-body">
+          <span class="xc-info-title">Info</span>
+          <p>
+            曲线为无漂移布朗运动下的首次触及概率：P = 2·(1 − Φ(k/√T))，k 为年化 σ 倍数。
+            相对真实触及率有两股反向偏差：
+            <strong>IV</strong> 溢价使曲线偏高；
+            <strong>fat tail</strong> / 跳空使曲线偏低。
+            下方随 k 的提示给出当前更可能哪边占主导（启发式，非定量修正）。
+          </p>
+        </div>
+      </aside>
+
+      <section class="xc-card pt-calc" aria-labelledby="pt-calc-title">
+        <h2 id="pt-calc-title">实时估算</h2>
+
+        <div class="pt-slider-block">
+          <div class="pt-slider-head">
+            <label for="sigma-slider">挂单价格目标</label>
+            <output id="sigma-value" for="sigma-slider" class="pt-sigma-readout">1.00σ</output>
+          </div>
+          <input
+            id="sigma-slider"
+            type="range"
+            min="0.05"
+            max="2.5"
+            step="0.05"
+            value="1"
+            aria-valuemin="0.05"
+            aria-valuemax="2.5"
+            aria-valuenow="1"
+            aria-describedby="sigma-hint"
+          />
+          <div class="pt-slider-ticks" aria-hidden="true">
+            <span style="left: 0%">0.05σ</span>
+            <span style="left: 38.775%">1.0σ</span>
+            <span style="left: 100%">2.5σ</span>
+          </div>
+          <p id="sigma-hint" class="xc-muted pt-hint">
+            假设对数价格近似无漂移布朗运动：P = 2·(1 − Φ(k/√T))
+          </p>
+        </div>
+
+        <div class="pt-probs" role="group" aria-label="触及概率">
+          <div class="pt-prob" data-horizon="1m">
+            <span class="pt-prob-label">1m <span class="pt-prob-t">T = 1/12</span></span>
+            <span id="prob-1m" class="pt-prob-value">—</span>
+          </div>
+          <div class="pt-prob" data-horizon="3m">
+            <span class="pt-prob-label">3m <span class="pt-prob-t">T = 0.25</span></span>
+            <span id="prob-3m" class="pt-prob-value">—</span>
+          </div>
+          <div class="pt-prob" data-horizon="6m">
+            <span class="pt-prob-label">6m <span class="pt-prob-t">T = 0.5</span></span>
+            <span id="prob-6m" class="pt-prob-value">—</span>
+          </div>
+          <div class="pt-prob" data-horizon="1y">
+            <span class="pt-prob-label">1y <span class="pt-prob-t">T = 1.0</span></span>
+            <span id="prob-1y" class="pt-prob-value">—</span>
+          </div>
+        </div>
+
+        <aside id="bias-hint" class="pt-bias" data-lean="mixed" aria-live="polite">
+          <span class="pt-bias-label" id="bias-label">—</span>
+          <span class="pt-bias-detail" id="bias-detail"></span>
+        </aside>
+      </section>
+
+      <div class="pt-hit-charts">
+        <section class="xc-card pt-chart-card" aria-labelledby="pt-pdf-title">
+          <h2 id="pt-pdf-title">概率密度</h2>
+          <div class="pt-chart-wrap">
+            <canvas
+              id="pdf-chart"
+              role="img"
+              aria-label="当前挂单目标的首次触及时间密度"
+            ></canvas>
+          </div>
+        </section>
+
+        <section class="xc-card pt-chart-card" aria-labelledby="pt-cdf-title">
+          <h2 id="pt-cdf-title">累计概率</h2>
+          <div class="pt-chart-wrap">
+            <canvas
+              id="cdf-chart"
+              role="img"
+              aria-label="当前挂单目标到各时刻已被触及的累计概率"
+            ></canvas>
+          </div>
+        </section>
+      </div>
+
+      <section class="xc-card pt-chart-card" aria-labelledby="pt-chart-title">
+        <h2 id="pt-chart-title">各目标对比</h2>
+        <div class="pt-chart-wrap">
+          <canvas
+            id="prob-chart"
+            role="img"
+            aria-label="各期限触及概率随 kσ 变化的曲线"
+          ></canvas>
+        </div>
+      </section>
+
+      <section class="xc-card" aria-labelledby="pt-table-title">
+        <h2 id="pt-table-title">参考表</h2>
+        <div class="xc-table-wrap pt-table-wrap">
+          <table class="pt-table">
+            <thead>
+              <tr>
+                <th scope="col">挂单目标</th>
+                <th scope="col">1m</th>
+                <th scope="col">3m</th>
+                <th scope="col">6m</th>
+                <th scope="col">1y</th>
+              </tr>
+            </thead>
+            <tbody id="ref-body"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer class="xc-footer">price-target · Wiener hitting probability</footer>
+    <script type="module" src="app.js?v=9"></script>
+  </body>
+</html>

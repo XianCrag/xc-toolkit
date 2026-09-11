@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rolling vs Fixed Bond Simulation</title>
+    <title>Rolling vs Fixed Bond · 滚动债对比</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-crosshair@2.0.0/dist/chartjs-plugin-crosshair.min.js"></script>
     <link rel="stylesheet" href="../xiancrag-ui.css">
@@ -11,13 +11,27 @@
 </head>
 <body>
     <header class="xc-header">
-        <div class="xc-header-row">
-            <h1>📊 Rolling vs Fixed Bond Simulation</h1>
-            <a class="xc-header-home" href="../">首页</a>
+        <div class="xc-wrap">
+            <div class="xc-header-row">
+                <h1>Rolling vs Fixed Bond</h1>
+                <a class="xc-header-home" href="../">首页</a>
+            </div>
+            <p>模拟利率路径下，对比 rolling 长久期与 fixed 持有到期</p>
         </div>
-        <p>Compare rolling long-term bonds strategy vs fixed bond strategy with interest rate fluctuations</p>
     </header>
     <main class="xc-page xc-page-wide">
+        <aside class="xc-info" role="note">
+            <span class="xc-info-mark" aria-hidden="true">i</span>
+            <div class="xc-info-body">
+                <span class="xc-info-title">Info</span>
+                <p>
+                    对比 TLT 风格的 rolling 长期债组合（维持久期：卖出到期过短的、买入新的 long bond）
+                    与 fixed buy-and-hold（coupon 再投资），利率路径可随机模拟。
+                    设好参数后点 <strong>Run Simulation</strong>，或用 <strong>Monte Carlo</strong> 跑 100 条路径。
+                </p>
+            </div>
+        </aside>
+
         <div class="xc-card controls">
             <div class="control-group">
                 <label for="maturity">Bond Maturity (years)</label>
@@ -75,7 +89,7 @@
         <div class="xc-card xc-actions">
             <div class="xc-btn-row">
                 <button type="button" class="xc-btn-primary" id="runBtn">Run Simulation</button>
-                <button type="button" class="xc-btn-primary" id="monteCarloBtn">Run 100 Simulations (Monte Carlo)</button>
+                <button type="button" class="xc-btn-primary" id="monteCarloBtn">Monte Carlo ×100</button>
                 <button type="button" class="xc-btn-secondary" id="resetBtn">Reset Defaults</button>
             </div>
         </div>
@@ -138,19 +152,9 @@
                 <tbody id="fixedTable"></tbody>
             </table>
         </div>
-        
-        <div class="xc-card info-box">
-            <h3>How it works:</h3>
-            <p>
-                <strong>Rolling Strategy (TLT-style):</strong> Holds bonds with 20-30 years remaining. Initially distributed evenly: bonds with 21y, 22y, ..., 30y remaining. Each year, bonds that drop below 20y are sold and new 30y bonds are bought at current market rate. Coupons reinvested at market price.
-                <br><br>
-                <strong>Fixed Strategy:</strong> Buy bonds at initial rate and hold to maturity with annual compounding.
-                <br><br>
-                <strong>Interest Rate Model:</strong> FFR follows mean-reverting random walk toward end FFR. 30y rate derived from FFR changes with beta=0.3 (long rates less sensitive to short-term changes).
-            </p>
-        </div>
     </main>
 
+    <footer class="xc-footer">rolling-bond · rate path simulation</footer>
     <script type="module" src="script.js"></script>
 </body>
 </html>

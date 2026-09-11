@@ -2,11 +2,13 @@
   "name": "xc-toolkit",
   "version": "1.0.0",
   "type": "module",
-  "description": "XianCrag Toolkit — rolling bond sim and scaling-in planner",
+  "description": "XianCrag Toolkit — personal investing utilities",
   "scripts": {
-    "start": "http-server --no-cache -p 8080",
+    "start": "http-server -c-1 -p 8080",
     "test": "node rolling-bond/test.js",
-    "test:scaling": "node --test scaling-in/engine.test.js"
+    "test:scaling": "node --test scaling-in/engine.test.js",
+    "test:price-target": "node --test price-target/engine.test.js",
+    "test:market-temp": "node --test market-temp/engine.test.js"
   },
   "devDependencies": {
     "http-server": "^14.1.1"

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>市场温度 · Market Temperature</title>
+    <meta
+      name="description"
+      content="Howard Marks 市场评估清单：按程度滑动左右特征，查看钟摆位置。"
+    />
+    <link rel="stylesheet" href="../xiancrag-ui.css" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="xc-header">
+      <div class="xc-wrap">
+        <div class="xc-header-row">
+          <h1>市场温度</h1>
+          <a class="xc-header-home" href="../">首页</a>
+        </div>
+        <p>Howard Marks · Poor Man’s Guide to Market Assessment</p>
+      </div>
+    </header>
+
+    <main class="xc-page">
+      <aside class="xc-info" role="note">
+        <span class="xc-info-mark" aria-hidden="true">i</span>
+        <div class="xc-info-body">
+          <span class="xc-info-title">Info</span>
+          <p>
+            Marks 清单：对每一对特征，把滑块拖向更贴近<strong>今天</strong>的一侧。
+            偏左＝贪婪 / 顶部；偏右＝恐惧 / 底部。多数偏左 → 捂紧钱包。
+          </p>
+        </div>
+      </aside>
+
+      <div id="form-root"></div>
+
+      <section class="xc-card" id="mt-result" aria-labelledby="mt-gauge-title">
+        <div class="mt-result-head">
+          <h2 id="mt-gauge-title">Temperature</h2>
+          <button type="button" id="btn-reset" class="xc-btn-secondary">Clear</button>
+        </div>
+
+        <div class="mt-readout" aria-live="polite">
+          <div class="mt-temp-row">
+            <span id="temp-value" class="mt-temp-value">—</span>
+            <span id="temp-zone" class="mt-temp-zone">Not scored</span>
+          </div>
+          <p id="temp-posture" class="xc-muted mt-temp-posture">
+            Drag the factors to score.
+          </p>
+        </div>
+
+        <div class="mt-pendulum-wrap">
+          <svg
+            class="mt-pendulum"
+            viewBox="0 0 320 120"
+            role="img"
+            aria-labelledby="mt-pendulum-title"
+          >
+            <title id="mt-pendulum-title">Market temperature pendulum</title>
+            <defs>
+              <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#3dd68c" />
+                <stop offset="50%" stop-color="#c9a227" />
+                <stop offset="100%" stop-color="#e85d4c" />
+              </linearGradient>
+            </defs>
+            <path
+              d="M 48 100 A 112 112 0 0 1 272 100"
+              fill="none"
+              stroke="url(#arcGrad)"
+              stroke-width="8"
+              stroke-linecap="round"
+              opacity="0.35"
+            />
+            <circle cx="160" cy="100" r="4" fill="var(--muted)" />
+            <g id="pendulum-arm" class="mt-arm" style="transform-origin: 160px 100px">
+              <line
+                x1="160"
+                y1="100"
+                x2="160"
+                y2="36"
+                stroke="var(--text)"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+              <circle
+                id="pendulum-bob"
+                cx="160"
+                cy="30"
+                r="11"
+                fill="var(--accent)"
+                stroke="var(--surface)"
+                stroke-width="2.5"
+              />
+            </g>
+          </svg>
+          <div class="mt-pendulum-caption xc-muted">
+            <span>Greed / top</span>
+            <span>Fear / bottom</span>
+          </div>
+        </div>
+
+        <p class="xc-muted mt-meta" id="mt-meta">0 of 28 answered</p>
+      </section>
+    </main>
+
+    <footer class="xc-footer">
+      market-temp · Howard Marks · not investment advice
+    </footer>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
