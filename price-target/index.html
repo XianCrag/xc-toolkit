@@ -2,15 +2,23 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0a0a0a" />
     <title>挂单触及概率 · Price target touch</title>
     <meta
       name="description"
       content="按年化标准差倍数估算挂单价格在 1m / 3m / 6m / 1y 内被触及的概率。"
     />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="manifest" href="../manifest.webmanifest" />
+    <link rel="icon" href="../icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="../icons/icon-192.png" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <link rel="stylesheet" href="../xiancrag-ui.css" />
     <link rel="stylesheet" href="styles.css" />
+    <script src="../pwa-register.js" defer></script>
+    <script src="../chart-fit.js" defer></script>
   </head>
   <body>
     <header class="xc-header">

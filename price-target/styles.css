@@ -236,6 +236,10 @@
 
 .pt-chart-wrap {
   position: relative;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
   height: clamp(200px, 48vw, 280px);
   background: #f4f6fa;
   border-radius: 8px;

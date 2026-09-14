@@ -2,15 +2,28 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a0a0a" />
+  <meta name="description" content="个人投资小工具 · 本地静态页" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="XC Toolkit" />
   <title>XianCrag Toolkit</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <link rel="stylesheet" href="xiancrag-ui.css" />
+  <script src="pwa-register.js" defer></script>
 </head>
 <body>
   <header class="xc-header">
-    <div class="xc-wrap">
-      <h1>XianCrag Toolkit</h1>
-      <p>个人投资小工具 · 本地静态页</p>
+    <div class="xc-wrap xc-brand">
+      <img class="xc-logo" src="icons/icon-192.png" width="72" height="72" alt="XianCrag" />
+      <div>
+        <h1>XianCrag Toolkit</h1>
+        <p>个人投资小工具</p>
+      </div>
     </div>
   </header>
   <main class="xc-page-home">
