@@ -4,7 +4,7 @@
  * Cross-origin (CDN): network-first with cache fallback.
  */
 
-const CACHE_VERSION = "xc-toolkit-v9";
+const CACHE_VERSION = "xc-toolkit-v10";
 const PRECACHE = [
   "./",
   "./index.html",
