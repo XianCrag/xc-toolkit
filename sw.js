@@ -4,7 +4,7 @@
  * Cross-origin (CDN): network-first with cache fallback.
  */
 
-const CACHE_VERSION = "xc-toolkit-v6";
+const CACHE_VERSION = "xc-toolkit-v10";
 const PRECACHE = [
   "./",
   "./index.html",
@@ -20,10 +20,10 @@ const PRECACHE = [
   "./market-temp/styles.css",
   "./market-temp/app.js",
   "./market-temp/engine.js",
-  "./price-target/index.html",
-  "./price-target/styles.css",
-  "./price-target/app.js",
-  "./price-target/engine.js",
+  "./touch-odds/index.html",
+  "./touch-odds/styles.css",
+  "./touch-odds/app.js",
+  "./touch-odds/engine.js",
   "./rolling-bond/index.html",
   "./rolling-bond/styles.css",
   "./rolling-bond/script.js",

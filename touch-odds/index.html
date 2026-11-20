@@ -4,10 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#0a0a0a" />
-    <title>挂单触及概率 · Price target touch</title>
+    <title>挂单触及概率 · Touch odds</title>
     <meta
       name="description"
-      content="按年化标准差倍数估算挂单价格在 1m / 3m / 6m / 1y 内被触及的概率。"
+      content="按年化标准差倍数估算挂单价格的触及概率（1m / 3m / 6m / 1y）、首次触及时点，以及单向 kσ 阶梯的全年触发次数分布。"
     />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -27,7 +27,7 @@
           <h1>挂单触及概率</h1>
           <a class="xc-header-home" href="../">首页</a>
         </div>
-        <p>偏离现价的年化 σ 倍数 → 1m / 3m / 6m / 1y 触及概率</p>
+        <p>偏离现价的年化 σ 倍数 → 触及概率 · 首次触及时点 · 全年触发次数</p>
       </div>
     </header>
 
@@ -47,11 +47,11 @@
       </aside>
 
       <section class="xc-card pt-calc" aria-labelledby="pt-calc-title">
-        <h2 id="pt-calc-title">实时估算</h2>
+        <h2 id="pt-calc-title">触及概率（实时）</h2>
 
         <div class="pt-slider-block">
           <div class="pt-slider-head">
-            <label for="sigma-slider">挂单价格目标</label>
+            <label for="sigma-slider">挂单目标偏离 kσ</label>
             <output id="sigma-value" for="sigma-slider" class="pt-sigma-readout">1.00σ</output>
           </div>
           <input
@@ -59,7 +59,7 @@
             type="range"
             min="0.05"
             max="2.5"
-            step="0.05"
+            step="0.01"
             value="1"
             aria-valuemin="0.05"
             aria-valuemax="2.5"
@@ -72,6 +72,7 @@
             <span style="left: 100%">2.5σ</span>
           </div>
           <p id="sigma-hint" class="xc-muted pt-hint">
+            滑块即 k（偏离现价的年化 σ 倍数），本页触及概率 / 时点 / 全年触发次数各图共用。
             假设对数价格近似无漂移布朗运动：P = 2·(1 − Φ(k/√T))
           </p>
         </div>
@@ -101,9 +102,32 @@
         </aside>
       </section>
 
+      <section class="xc-card pt-trigger" aria-labelledby="pt-trigger-title">
+        <div class="pt-trigger-head">
+          <h2 id="pt-trigger-title">全年触发次数</h2>
+          <div class="pt-trigger-stat">
+            <span id="trigger-expected" class="pt-trigger-value">—</span>
+            <span class="pt-trigger-unit">次 / 年（期望）</span>
+          </div>
+        </div>
+        <p class="xc-muted pt-hint">
+          单向 kσ 阶梯：按上方所选 kσ 挂单，成交后以成交价为新基准再挂 kσ（同一倍数）。
+          第 n 次成交恰好发生在价格累计走到 n·kσ 时，故
+          P(N ≥ n) = 2·(1 − Φ(nk))，为无漂移布朗运动下的精确结果；
+          n = 0 即全年未成交，P(N ≥ 1) 恰为上方 1y 触及概率。
+        </p>
+        <div class="pt-chart-wrap">
+          <canvas
+            id="trigger-chart"
+            role="img"
+            aria-label="当前 kσ 阶梯全年触发次数的概率分布"
+          ></canvas>
+        </div>
+      </section>
+
       <div class="pt-hit-charts">
         <section class="xc-card pt-chart-card" aria-labelledby="pt-pdf-title">
-          <h2 id="pt-pdf-title">概率密度</h2>
+          <h2 id="pt-pdf-title">首次触及时间 · 密度</h2>
           <div class="pt-chart-wrap">
             <canvas
               id="pdf-chart"
@@ -114,7 +138,7 @@
         </section>
 
         <section class="xc-card pt-chart-card" aria-labelledby="pt-cdf-title">
-          <h2 id="pt-cdf-title">累计概率</h2>
+          <h2 id="pt-cdf-title">首次触及时间 · 累计概率</h2>
           <div class="pt-chart-wrap">
             <canvas
               id="cdf-chart"
@@ -126,7 +150,7 @@
       </div>
 
       <section class="xc-card pt-chart-card" aria-labelledby="pt-chart-title">
-        <h2 id="pt-chart-title">各目标对比</h2>
+        <h2 id="pt-chart-title">触及概率 · 随 kσ 变化</h2>
         <div class="pt-chart-wrap">
           <canvas
             id="prob-chart"
@@ -155,7 +179,7 @@
       </section>
     </main>
 
-    <footer class="xc-footer">price-target · Wiener hitting probability</footer>
-    <script type="module" src="app.js?v=9"></script>
+    <footer class="xc-footer">touch-odds · Wiener hitting probability</footer>
+    <script type="module" src="app.js?v=10"></script>
   </body>
 </html>

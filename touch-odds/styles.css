@@ -1,4 +1,4 @@
-/* price-target — mobile-first single column */
+/* touch-odds — mobile-first single column */
 
 .pt-page {
   gap: 1.25rem;
@@ -212,6 +212,43 @@
 }
 .pt-bias[data-lean="under"] .pt-bias-label { color: #c97b3a; }
 .pt-bias[data-lean="mixed"] .pt-bias-label { color: var(--text); }
+
+.pt-trigger-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.4rem;
+}
+
+.pt-trigger-head h2 {
+  margin: 0;
+}
+
+.pt-trigger-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+}
+
+.pt-trigger-value {
+  font-size: clamp(1.6rem, 6vw, 2.1rem);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--ok);
+}
+
+.pt-trigger-unit {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.pt-trigger .pt-chart-wrap {
+  margin-top: 0.75rem;
+}
 
 .pt-hit-charts {
   display: flex;

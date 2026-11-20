@@ -4,10 +4,12 @@ import {
   biasHint,
   buildCurve,
   buildHitTimeCurve,
+  buildTriggerDistribution,
+  expectedTriggers,
   firstHitDensity,
   formatPct,
   touchProbability,
-} from "./engine.js?v=5";
+} from "./engine.js?v=6";
 
 const STORAGE_KEY = "priceTargetSigma";
 const MAX_K = 2.5;
@@ -22,6 +24,10 @@ const probEls = Object.fromEntries(
 const biasEl = document.getElementById("bias-hint");
 const biasLabel = document.getElementById("bias-label");
 const biasDetail = document.getElementById("bias-detail");
+const triggerExpectedEl = document.getElementById("trigger-expected");
+
+const TRIGGER_COLOR = "#3dd68c";
+const TRIGGER_MAX_N = 12;
 
 function loadSigma() {
   const raw = localStorage.getItem(STORAGE_KEY);
@@ -367,6 +373,93 @@ function createCdfChart() {
   });
 }
 
+function triggerLabel(bar) {
+  return bar.overflow ? `${bar.n - 1}+` : String(bar.n);
+}
+
+function createTriggerChart() {
+  return new Chart(document.getElementById("trigger-chart"), {
+    type: "line",
+    data: {
+      labels: [],
+      datasets: [
+        {
+          label: "触发次数概率",
+          data: [],
+          borderColor: TRIGGER_COLOR,
+          backgroundColor: "rgba(61, 214, 140, 0.18)",
+          fill: true,
+          tension: 0.25,
+          pointRadius: 3.5,
+          pointHoverRadius: 5,
+          pointBackgroundColor: TRIGGER_COLOR,
+          pointBorderColor: "#fff",
+          pointBorderWidth: 1.5,
+          borderWidth: 2.25,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: { duration: 0 },
+      interaction: { mode: "index", intersect: false },
+      plugins: {
+        ...chartTextStyle(),
+        tooltip: {
+          callbacks: {
+            title: (items) => `${items[0]?.label ?? ""} 次 / 年`,
+            label: (item) => ` 概率: ${(Number(item.parsed.y)).toFixed(1)}%`,
+          },
+        },
+      },
+      scales: {
+        x: {
+          type: "category",
+          title: {
+            display: true,
+            text: "全年触发次数 n",
+            color: "#64748b",
+            font: { size: 11 },
+          },
+          ticks: { color: "#64748b" },
+          grid: { color: "rgba(148, 163, 184, 0.25)" },
+        },
+        y: {
+          type: "linear",
+          min: 0,
+          title: {
+            display: true,
+            text: "概率 %",
+            color: TRIGGER_COLOR,
+            font: { size: 11 },
+          },
+          ticks: {
+            color: TRIGGER_COLOR,
+            callback: (v) => `${v}%`,
+          },
+          grid: { color: "rgba(148, 163, 184, 0.25)" },
+        },
+      },
+    },
+  });
+}
+
+function updateTriggerChart(k) {
+  const bars = buildTriggerDistribution(k, 1, TRIGGER_MAX_N);
+  triggerChart.data.labels = bars.map(triggerLabel);
+  triggerChart.data.datasets[0].data = bars.map((b) => b.p * 100);
+  const maxPct = Math.max(...bars.map((b) => b.p), 0) * 100;
+  triggerChart.options.scales.y.max = Math.min(
+    100,
+    Math.max(10, Math.ceil((maxPct * 1.12) / 10) * 10)
+  );
+  triggerChart.update("none");
+
+  const mean = expectedTriggers(k, 1);
+  triggerExpectedEl.textContent = Number.isFinite(mean) ? mean.toFixed(2) : "—";
+}
+
 function updateHitCharts(k) {
   const curve = buildHitTimeCurve(k, MAX_YEARS, 160);
   const pdfSeries = curve.map((p) => ({ x: p.t, y: p.density }));
@@ -387,6 +480,7 @@ function updateHitCharts(k) {
 const compareChart = createCompareChart();
 const pdfChart = createPdfChart();
 const cdfChart = createCdfChart();
+const triggerChart = createTriggerChart();
 
 function update(k) {
   slider.value = String(k);
@@ -402,6 +496,7 @@ function update(k) {
   renderTable(k);
   compareChart.$currentK = k;
   compareChart.update("none");
+  updateTriggerChart(k);
   updateHitCharts(k);
   saveSigma(k);
 }
