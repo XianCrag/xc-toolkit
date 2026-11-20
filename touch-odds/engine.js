@@ -123,6 +123,69 @@ export function buildCurve(maxK = 2.5, steps = 100) {
 }
 
 /**
+ * Yearly trigger count for a one-directional kσ ladder.
+ *
+ * Strategy: place an order kσ from price; once filled, reset the reference to
+ * the fill price and place the next order another kσ away (same multiple, no
+ * custom band). The n-th fill happens exactly when the running extreme first
+ * reaches n·kσ, so by continuity of driftless BM the events nest:
+ *   P(N ≥ n) = P(touch n·kσ within T) = touchProbability(n·k, T)
+ * This is exact under the page's driftless-BM assumption (no simulation).
+ *
+ * @param {number} kSigma - ladder step in annualized σ (k > 0)
+ * @param {number} years  - horizon T in years (default 1 → per year)
+ * @param {number} n      - number of triggers (n ≥ 0)
+ * @returns {number} P(N = n)
+ */
+export function triggerCountProbability(kSigma, years = 1, n) {
+  const k = Math.max(0, Number(kSigma));
+  if (!Number.isInteger(n) || n < 0 || !(k > 0)) return NaN;
+  const atLeast = (m) => (m <= 0 ? 1 : touchProbability(m * k, years));
+  return atLeast(n) - atLeast(n + 1);
+}
+
+/**
+ * Expected number of ladder triggers over the horizon (default per year).
+ * E[N] = Σ_{n≥1} P(N ≥ n) = Σ_{n≥1} touchProbability(n·k, T).
+ * @param {number} kSigma - ladder step in annualized σ (k > 0)
+ * @param {number} years  - horizon T in years (default 1)
+ */
+export function expectedTriggers(kSigma, years = 1) {
+  const k = Math.max(0, Number(kSigma));
+  if (!(k > 0) || !(years > 0)) return NaN;
+  let sum = 0;
+  for (let n = 1; n <= 10000; n++) {
+    const term = touchProbability(n * k, years);
+    sum += term;
+    if (term < 1e-7) break;
+  }
+  return sum;
+}
+
+/**
+ * Discrete count distribution P(N = n) for n = 0..maxN (+ an overflow tail),
+ * for the kσ ladder over the horizon. Returned bars sum to 1.
+ * @param {number} kSigma - ladder step in annualized σ (k > 0)
+ * @param {number} years  - horizon T in years (default 1)
+ * @param {number} maxN   - highest explicit count bucket
+ */
+export function buildTriggerDistribution(kSigma, years = 1, maxN = 12) {
+  const k = Math.max(0, Number(kSigma));
+  const bars = [];
+  if (!(k > 0) || !(years > 0)) return bars;
+  let cumulative = 0;
+  for (let n = 0; n <= maxN; n++) {
+    const p = Math.max(0, triggerCountProbability(k, years, n));
+    cumulative += p;
+    bars.push({ n, p });
+  }
+  // Fold the remaining probability mass into a final "maxN+ " bucket.
+  const tail = Math.max(0, 1 - cumulative);
+  bars.push({ n: maxN + 1, p: tail, overflow: true });
+  return bars;
+}
+
+/**
  * Time-path distribution for a fixed target k:
  * density f(t) and cumulative P(τ ≤ t) from ~0 to maxYears.
  */
